@@ -1,16 +1,20 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -MMD -MP -g
 
-INCLUDES = -I includes
+INCLUDES = -I includes -I includes/list -I includes/server
 
 NAME = ft_shield
 
 SRCS =	src/main.c\
-		src/server.c\
-		src/server_utils.c\
-		src/list.c\
-		src/list_node.c\
-		src/logger.c
+		src/server/server.c\
+		src/server/server_utils.c\
+		src/server/server_hooks.c\
+		src/list/list.c\
+		src/list/list_node.c\
+		src/logger.c\
+		src/payload.c\
+		src/ctx.c\
+		src/sha256.c
 
 OBJDIR = obj
 OBJS = $(SRCS:%.c=$(OBJDIR)/%.o)

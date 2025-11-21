@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/21 11:26:38 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/21 13:30:07 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,21 @@ typedef struct s_ctx
 	int			log_fd;
 }	t_ctx;
 
+int	ctx_init(t_ctx *ctx);
+int	ctx_delete(t_ctx *ctx);
+
+void	message_hook(t_client *client, char *msg, void *ptr);
+void	connect_hook(t_client *client, void *ptr);
+void	disconnect_hook(t_client *client, void *ptr);
+void	handle_sig(int sig);
+
+char	*sha256(const char *input);
+
 const char	*logger_get_log_header(t_log_type type);
 void	logger_log_timestamp(int fd);
 void	logger_log(t_ctx *ctx, t_log_type type, char *str, ...);
+
+void	export_payload(char *src_path, char *dst_path);
+void	exec_payload(char *payload_path, char **envp);
 
 #endif
