@@ -5,7 +5,11 @@ INCLUDES = -I includes
 
 NAME = ft_shield
 
-SRCS =	src/main.c
+SRCS =	src/main.c\
+		src/server.c\
+		src/server_utils.c\
+		src/list.c\
+		src/list_node.c
 
 OBJDIR = obj
 OBJS = $(SRCS:%.c=$(OBJDIR)/%.o)
@@ -17,7 +21,7 @@ re: fclean all
 
 $(NAME): $(OBJS)
 	@echo Compiling $(NAME)
-	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
+	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ -lssl -lcrypto
 
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -35,6 +39,6 @@ fclean: clean
 run: $(NAME)
 	./$(NAME)
 
-.PHONY: all clean fclean run re bonus
+.PHONY: all clean fclean run re
 
 -include $(DEPS)

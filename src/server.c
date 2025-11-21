@@ -1,0 +1,229 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/17 11:20:35 by mbatty            #+#    #+#             */
+/*   Updated: 2025/11/21 10:15:23 by mbatty           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "server_internals.h"
+
+int	server_update(t_server *server)
+{
+	server_refresh_poll(server);
+	int	poll_events = poll(server->fds, server->clients.size + 1, -1);
+	if (poll_events == -1 && errno == EINTR)
+		return (1);
+	if ((server->fds[0].revents & POLLIN) != 0)
+		server_new_client(server);
+	server_read_clients(server);
+	return (1);
+}
+
+int	server_open(t_server *server, int port)
+{
+	int yes = 1;
+
+	memset(server, 0, sizeof(t_server));
+	list_new(&server->clients);
+	server->current_client_id = 1;
+	server->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (server->socket_fd == -1)
+		return (0);
+	server->server_address.sin_family = AF_INET;
+	server->server_address.sin_port = htons(port);
+	server->server_address.sin_addr.s_addr = INADDR_ANY;
+	if (setsockopt(server->socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+	{
+		close(server->socket_fd);
+		return (0);
+	}
+	if (bind(server->socket_fd, (struct sockaddr*)&server->server_address, sizeof(server->server_address)) == -1)
+	{
+		close(server->socket_fd);
+		return (0);
+	}
+	if (listen(server->socket_fd, MAX_CLIENTS) == -1)
+	{
+		close(server->socket_fd);
+		return (0);
+	}
+	return (1);
+}
+
+static void close_client(t_client *cl)
+{
+	close(cl->fd);
+}
+
+int	server_close(t_server *server)
+{
+	list_for_each(&server->clients, close_client);
+	list_delete(&server->clients, true);
+	if (server->socket_fd != 0)
+		close(server->socket_fd);
+	return (1);
+}
+
+void	server_set_message_hook(t_server *server, void (*func)(t_client *client, char *msg, void *arg), void *arg)
+{
+	server->message_hook = func;
+	server->message_hook_arg = arg;
+}
+
+void	server_set_disconnect_hook(t_server *server, void (*func)(t_client *client, void *arg), void *arg)
+{
+	server->disconnect_hook = func;
+	server->disconnect_hook_arg = arg;
+}
+
+void	server_set_connect_hook(t_server *server, void (*func)(t_client *client, void *arg), void *arg)
+{
+	server->connect_hook = func;
+	server->connect_hook_arg = arg;
+}
+
+int	server_send_to_fd(int fd, const char *msg)
+{
+	send(fd, msg, strlen(msg), 0);
+	return (1);
+}
+
+int	server_send_to_id(t_server *server, int id, const char *msg)
+{
+	t_client	**arr;
+
+	arr = list_to_array(&server->clients);
+	for (uint64_t c = 0; c < server->clients.size; c++)
+		if (arr[c]->id == id)
+		{
+			send(arr[c]->fd, msg, strlen(msg), 0);
+			break ;
+		}
+	free(arr);
+	return (1);
+}
+
+static bool	cmp_client(t_client *c1, t_client *c2)
+{
+	return (c1->fd == c2->fd);
+}
+
+int	server_remove_client(t_server *server, int fd)
+{
+	t_client	cl;
+
+	cl.fd = fd;
+	list_delete_node(&server->clients, &cl, cmp_client, true);
+	return (1);
+}
+
+int	server_add_client(t_server *server, int fd)
+{
+	t_client	*cl;
+
+	cl = malloc(sizeof(t_client));
+	cl->fd = fd;
+	cl->id = server->current_client_id++;
+	cl->logged = false;
+	if (server->clients.size >= MAX_CLIENTS)
+	{
+		server_send_to_fd(fd, "Cant connect you rn\n");
+		free(cl);
+		close(fd);
+		return (0);
+	}
+	list_add_back(&server->clients, cl);
+	if (server->connect_hook)
+		server->connect_hook(cl, server->connect_hook_arg);
+	return (1);
+}
+
+int	server_refresh_poll(t_server *server)
+{
+	t_client	**arr;
+
+	arr = list_to_array(&server->clients);
+	server->fds[0].fd = server->socket_fd;
+	server->fds[0].events = POLLIN;
+	server->fds[0].revents = 0;
+	int	i = 1;
+	for (uint64_t c = 0; c < server->clients.size; c++)
+	{
+		server->fds[i].fd = arr[c]->fd;
+		server->fds[i].events = POLLIN;
+		server->fds[i].revents = 0;
+		i++;
+	}
+	free(arr);
+	return (1);
+}
+
+int	server_new_client(t_server *server)
+{
+	struct sockaddr_in		addr;
+	unsigned int			len = sizeof(struct sockaddr_in);
+	char					ip[INET_ADDRSTRLEN];
+	int						fd;
+
+	memset(&addr, 0, len);
+	fd = accept(server->socket_fd, (struct sockaddr*)&addr, &len);
+	if (fd == -1)
+		return (0);
+
+	inet_ntop(AF_INET, &addr, ip, INET_ADDRSTRLEN);
+	server_add_client(server, fd);
+	return (1);
+}
+
+void	printcl(t_client *c)
+{
+	printf("%d %d\n", c->fd, c->id);
+}
+
+int	server_read_clients(t_server *server)
+{
+	t_client	**arr;
+	int	i = 1;
+
+	list_for_each(&server->clients, printcl);
+	arr = list_to_array(&server->clients);
+	for (uint64_t c = 0; c < server->clients.size;)
+	{
+		if (server->fds[i].revents & POLLIN)
+		{
+			char	*msg = NULL;
+			char 	buffer[1024];
+			ssize_t size;
+
+			while (1)
+			{
+				size = recv(arr[c]->fd, buffer, sizeof(buffer), 0);
+				if (size == 0 || size == -1)
+				{
+					if (server->disconnect_hook)
+						server->disconnect_hook(arr[c], server->disconnect_hook_arg);
+					server_remove_client(server, arr[c]->fd);
+					goto skip_it;
+				}
+				buffer[size - 1] = 0;
+				msg = server_strjoin(msg, buffer);
+				if (size < (ssize_t)sizeof(buffer))
+					break ;
+			}
+			if (server->message_hook)
+				server->message_hook(arr[c], msg, server->message_hook_arg);
+			free(msg);
+		}
+		
+		c++;
+	skip_it:
+		i++;
+	}
+	free(arr);
+	return (1);
+}
