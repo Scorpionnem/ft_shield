@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:20:35 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/21 15:36:03 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/21 23:02:15 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 int	server_update(t_server *server)
 {
 	server_refresh_poll(server);
-	int	poll_events = poll(server->fds, server->clients.size + 1, -1);
+	int	poll_events = poll(server->fds, server->clients.size + 1, 250);
 	if (poll_events == -1 && errno == EINTR)
 		return (1);
 	if ((server->fds[0].revents & POLLIN) != 0)
@@ -219,7 +219,7 @@ int	server_read_clients(t_server *server)
 				server->message_hook(arr[c], msg, server->message_hook_arg);
 			free(msg);
 		}
-		
+
 		c++;
 	skip_it:
 		i++;
@@ -227,16 +227,15 @@ int	server_read_clients(t_server *server)
 	free(arr);
 	arr = list_to_array(&server->clients);
 	for (uint64_t c = 0; c < server->clients.size; c++)
-	{		
+	{
 		if (arr[c]->shell_pid > 0)
 		{
 			int	status = 0;
 			int result = waitpid(arr[c]->shell_pid, &status, WNOHANG);
 			if (result == arr[c]->shell_pid)
 			{
-				if (server->disconnect_hook)
-						server->disconnect_hook(arr[c], server->disconnect_hook_arg);
-					server_remove_client(server, arr[c]->fd);
+				arr[c]->shell_pid = 0;
+				server_send_to_fd(arr[c]->fd, PROMPT);
 			}
 		}
 	}

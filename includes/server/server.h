@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 18:15:07 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/21 14:32:01 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/21 22:50:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@
 #  endif
 
 # include "list.h"
+
+# define PROMPT "$> "
 
 typedef struct s_client
 {

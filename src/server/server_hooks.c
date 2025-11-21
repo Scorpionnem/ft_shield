@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/21 15:39:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/21 23:08:00 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static int	check_client_password(t_ctx *ctx, t_client *client, char *msg)
 		{
 			logger_log(ctx, LOG_LOG, "Client %d correct password (%s)", client->id, hashed_msg);
 			server_send_to_id(&ctx->server, client->id, CORRECT_PASSWORD_TEXT);
+			server_send_to_fd(client->fd, PROMPT);
 			client->logged = true;
 			free(hashed_msg);
 			return (0);
@@ -47,7 +48,8 @@ static void	start_remote_shell(t_ctx *ctx, t_client *client)
 		dup2(client->fd, STDERR_FILENO);
 		dup2(client->fd, STDIN_FILENO);
 
-		ctx_delete(ctx);
+		logger_log(ctx, LOG_INFO, "Sucessfully forked, spawning shell");
+		ctx_delete(ctx, false);
 
 		char	*argv[] = {"/bin/sh", NULL};
 		execv("/bin/sh", argv);
@@ -63,19 +65,26 @@ void	message_hook(t_client *client, char *msg, void *ptr)
 		return ;
 
 	logger_log(ctx, LOG_LOG, "From %d: %s", client->id, msg);
-	
+
 	if (!strcmp(msg, "shell"))
+	{
 		start_remote_shell(ctx, client);
-	if (!strcmp(msg, "help"))
+		return ;
+	}
+	else if (!strcmp(msg, "help"))
 	{
 		logger_log(ctx, LOG_LOG, "Client %d help command entered", client->id);
 		server_send_to_id(&ctx->server, client->id, HELP_TEXT);
 	}
-	if (!strcmp(msg, "quit"))
+	else if (!strcmp(msg, "quit"))
 	{
 		logger_log(ctx, LOG_LOG, "Client %d quit command entered", client->id);
 		ctx->running = false;
+		return ;
 	}
+	else
+		server_send_to_id(&ctx->server, client->id, UNKNOWN_COMMAND_TEXT);
+	server_send_to_fd(client->fd, PROMPT);
 }
 
 void	connect_hook(t_client *client, void *ptr)
