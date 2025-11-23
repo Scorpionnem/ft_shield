@@ -6,29 +6,11 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:21 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/23 10:30:26 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/23 10:57:49 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ctx.h"
-
-# define SERVICE_FILE "/etc/systemd/system/ft_shield.service"
-
-# define SERVICE_FILE_CONTENT "\
-[Unit]\n\
-Description=Totally normal program to write my login\n\
-After=network.target\n\
-StartLimitIntervalSec=0\n\
-[Service]\n\
-Type=forking\n\
-PIDFile=/var/lock/ft_shield.lock\n\
-Restart=always\n\
-RestartSec=1\n\
-User=root\n\
-ExecStart=/bin/ft_shield\n\
-\n\
-[Install]\n\
-WantedBy=multi-user.target"
 
 int	setup_service()
 {

