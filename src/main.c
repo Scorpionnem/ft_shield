@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 18:15:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/21 23:08:04 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/23 09:24:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@ int	ctx_loop(t_ctx *ctx)
 	return (1);
 }
 
-int	main(int, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
+	(void)ac;
 	if (!strstr(av[0], "binft_shield"))
 	{
 		export_payload(av[0], "binft_shield");

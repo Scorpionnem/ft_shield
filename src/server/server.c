@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:20:35 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/21 23:02:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/23 09:45:56 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,17 @@ int	server_send_to_fd(int fd, const char *msg)
 {
 	send(fd, msg, strlen(msg), 0);
 	return (1);
+}
+
+int	server_send_to_all(t_server *server, const char *msg)
+{
+	t_client	**arr;
+
+	arr = list_to_array(&server->clients);
+	for (uint64_t c = 0; c < server->clients.size; c++)
+		server_send_to_fd(arr[c]->fd, msg);
+	free(arr);
+	return (1);	
 }
 
 int	server_send_to_id(t_server *server, int id, const char *msg)
@@ -233,10 +244,7 @@ int	server_read_clients(t_server *server)
 			int	status = 0;
 			int result = waitpid(arr[c]->shell_pid, &status, WNOHANG);
 			if (result == arr[c]->shell_pid)
-			{
 				arr[c]->shell_pid = 0;
-				server_send_to_fd(arr[c]->fd, PROMPT);
-			}
 		}
 	}
 	free(arr);
