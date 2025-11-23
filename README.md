@@ -41,6 +41,10 @@ Makes ft_shield exit
 help:
 Show help
 
+### Example
+
+<img width="945" height="747" alt="image" src="https://github.com/user-attachments/assets/264b358e-5e7e-439b-a57a-494bee64bc87" />
+
 ## Notes
 
 DO NOT USE THIS PROJECT FOR MALICIOUS INTENTS, it aint my fault if you do bad things with it.
