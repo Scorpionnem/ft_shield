@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/24 10:58:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/24 14:10:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <time.h>
 # include <openssl/evp.h>
 # include "prod.h"
+# include <netdb.h>
 
 # define TEXT_RED "\033[31m"
 # define TEXT_GREEN "\033[32m"

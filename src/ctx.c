@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/24 13:42:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/24 14:23:06 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,7 @@ int	unlock_file(t_ctx *ctx)
 }
 
 # define SWORD_PORT	7003
-# define SWORD_IP		"2g1.42angouleme.fr"
-# include <netdb.h>
+# define SWORD_IP	"10.12.7.1"
 
 void	send_host_to_sword()
 {
@@ -85,12 +84,12 @@ void	send_host_to_sword()
 
 	memset(&server_addr, 0, sizeof(server_addr));
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	
+
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(SWORD_PORT);
 	inet_pton(AF_INET, SWORD_IP, &server_addr.sin_addr);
 
-	if (connect(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0)
+	if (connect(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1)
 	{
 		close(socket_fd);
 		return ;
