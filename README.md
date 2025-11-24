@@ -51,7 +51,7 @@ ft_sword is a bonus, it opens a socket on your computer to wich ft_shield will c
 To use it, just:
 
 ```
-make
+make bonus
 ```
 
 ```
