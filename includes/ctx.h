@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/24 09:27:01 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/24 10:58:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 # define INCORRECT_PASSWORD_TEXT	TEXT_RED	TEXT_BOLD "Incorrect password!\n"																TEXT_RESET
 # define CORRECT_PASSWORD_TEXT		TEXT_GREEN	TEXT_BOLD "Correct password, welcome in!\n" TEXT_BLUE "Write \'help\' for more information\n"	TEXT_RESET
 # define WELCOME_TEXT				TEXT_BLUE	TEXT_BOLD "Welcome to ft_shield!\n"																TEXT_RESET
-# define RVRS_SHELL_TEXT			TEXT_BLUE	TEXT_BOLD "Launching shell.\n"															TEXT_RESET
+# define RVRS_SHELL_TEXT			TEXT_BLUE	TEXT_BOLD "Launching shell.\n"																	TEXT_RESET
 # define UNKNOWN_COMMAND_TEXT		TEXT_BLUE	TEXT_BOLD "Unknown command. (see help)\n"														TEXT_RESET
 
 # define HELP_TEXT					TEXT_BLUE	TEXT_BOLD \

