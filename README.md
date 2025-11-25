@@ -47,7 +47,7 @@ Show help
 
 # ⚔️ ft_sword (Bonus)
 
-ft_sword is a bonus, it opens a socket on your computer to wich ft_shield will connect telling you it was launched and on wich ip
+ft_sword is a bonus, it opens a socket on your computer to wich ft_shield will connect telling you it was launched and on wich ip (Make sure to edit SWORD_IP and SWORD_PORT to your computer's in ctx.h)
 To use it, just:
 
 ```
