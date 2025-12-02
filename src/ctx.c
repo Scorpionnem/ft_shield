@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/02 21:25:12 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/02 21:38:42 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	send_host_to_sword(int server_port)
 
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(SWORD_PORT);
-	inet_pton(AF_INET, "0.0.0.0", &server_addr.sin_addr);
+	inet_pton(AF_INET, SWORD_IP, &server_addr.sin_addr);
 
 	if (connect(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1)
 	{
