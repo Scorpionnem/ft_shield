@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/02 12:27:46 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/02 21:25:12 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	send_host_to_sword(int server_port)
 
 	char	buf[4096];
 	(void)host_buffer;
-	sprintf(buf, "%s %d", ip_buffer, server_port);
+	sprintf(buf, "%s %d\n", ip_buffer, server_port);
 
 	struct sockaddr_in	server_addr;
 	int					socket_fd;

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 18:15:07 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/27 14:33:40 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/02 20:11:15 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_client
 
 	bool	logged;
 	int		shell_pid;
+	char	*buffer;
 }	t_client;
 
 typedef struct s_server

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:25:11 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/19 15:11:39 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/02 20:45:00 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,7 @@ int	server_add_client(t_server *server, int fd);
 
 char	*server_strdup(const char *s);
 char	*server_strjoin(char *s1, char *s2);
+char	*server_strchr(char *s, char c);
+char	*server_extract_line(char **str);
 
 #endif

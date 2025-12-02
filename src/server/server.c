@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:20:35 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/24 11:22:49 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/02 21:25:02 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ static void close_client(t_client *cl)
 {
 	if (cl->shell_pid > 0)
 		kill(cl->shell_pid, SIGKILL);
+	if (cl->buffer)
+		free(cl->buffer);
 	close(cl->fd);
 }
 
@@ -134,6 +136,9 @@ int	server_remove_client(t_server *server, int fd)
 	t_client	cl;
 
 	cl.fd = fd;
+	t_client *real_cl = list_find(&server->clients, &cl, cmp_client);
+	if (real_cl && real_cl->buffer)
+		free(real_cl->buffer);
 	list_delete_node(&server->clients, &cl, cmp_client, true);
 	return (1);
 }
@@ -207,12 +212,11 @@ int	server_read_clients(t_server *server)
 	{
 		if (server->fds[i].revents & POLLIN && arr[c]->shell_pid == 0)
 		{
-			char	*msg = NULL;
-			char 	buffer[1024];
-			ssize_t size;
-
 			while (1)
 			{
+				char 	buffer[1024] = {0};
+				ssize_t size;
+	
 				size = recv(arr[c]->fd, buffer, sizeof(buffer), 0);
 				if (size == 0 || size == -1)
 				{
@@ -221,14 +225,20 @@ int	server_read_clients(t_server *server)
 					server_remove_client(server, arr[c]->fd);
 					goto skip_it;
 				}
-				buffer[size - 1] = 0;
-				msg = server_strjoin(msg, buffer);
-				if (size < (ssize_t)sizeof(buffer))
+				arr[c]->buffer = server_strjoin(arr[c]->buffer, buffer);
+				if (server_strchr(arr[c]->buffer, '\n'))
 					break ;
 			}
-			if (server->message_hook)
-				server->message_hook(arr[c], msg, server->message_hook_arg);
-			free(msg);
+			while (1)
+			{
+				char	*msg = server_extract_line(&arr[c]->buffer);
+				if (!msg)
+					break ;
+
+				if (server->message_hook)
+					server->message_hook(arr[c], msg, server->message_hook_arg);
+				free(msg);
+			}
 		}
 
 		c++;

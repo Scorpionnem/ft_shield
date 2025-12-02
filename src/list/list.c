@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 09:26:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/21 10:14:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/02 20:13:25 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,20 @@ bool	list_has(t_list *vec, LIST_TYPE data, bool (*cmp_func)(LIST_TYPE, LIST_TYPE
 		list = list->next;
 	}
 	return (false);
+}
+
+LIST_TYPE	list_find(t_list *vec, LIST_TYPE data, bool (*cmp_func)(LIST_TYPE, LIST_TYPE))
+{
+	t_list_node	*list;
+	
+	list = vec->list;
+	while (list)
+	{
+		if (cmp_func(data, list->data))
+			return (list->data);
+		list = list->next;
+	}
+	return (0);
 }
 
 LIST_TYPE	*list_to_array(t_list *vec)
