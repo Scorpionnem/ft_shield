@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:38 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/03 00:37:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 00:39:39 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,8 @@ void	logger_log_timestamp(int fd)
 
 int	get_sword_fd();
 
-void	logger_log(t_ctx *ctx, t_log_type type, char *str, ...)
+void	logger_log(t_log_type type, char *str, ...)
 {
-	(void)ctx;
 	va_list	args;
 
 	int fd = get_sword_fd();

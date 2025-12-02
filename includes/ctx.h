@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/02 21:50:18 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 00:40:02 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ typedef enum e_log_type
 typedef struct s_ctx
 {
 	t_server	server;
-	int			log_fd;
 	int			lock_fd;
 	bool		running;
 	bool		is_root;
@@ -97,7 +96,7 @@ uint32_t	hash_str(const char *input);
 
 const char	*logger_get_log_header(t_log_type type);
 void	logger_log_timestamp(int fd);
-void	logger_log(t_ctx *ctx, t_log_type type, char *str, ...);
+void	logger_log(t_log_type type, char *str, ...);
 
 int		export_payload(bool root, char *src_path, char *dst_path);
 void	exec_payload(char *payload_path, char **envp);

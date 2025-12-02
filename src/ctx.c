@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/03 00:35:37 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 00:44:29 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	get_sword_fd()
 	return (socket_fd);
 }
 
-void	send_host_to_sword(t_ctx *ctx, int server_port)
+void	send_host_to_sword(int server_port)
 {
 	char host_buffer[256];
 	char *ip_buffer;
@@ -95,37 +95,53 @@ void	send_host_to_sword(t_ctx *ctx, int server_port)
 	if (!ip_buffer)
 		return ;
 
-	logger_log(ctx, LOG_INFO, "Running ft_shield on %s (%s) %d\n", ip_buffer, host_buffer, server_port);
+	logger_log(LOG_INFO, "Running ft_shield on %s (%s) %d\n", ip_buffer, host_buffer, server_port);
+}
+
+static int	setup_signals()
+{
+	signal(SIGINT, handle_sig);
+	signal(SIGTERM, handle_sig);
+	return (1);
+}
+
+static int	ctx_open_server(t_ctx *ctx)
+{
+	int	server_port;
+	if (ctx->is_root)
+		server_port = 4242;
+	else
+		server_port = 7002;
+
+	logger_log(LOG_INFO, "Opening server");
+	if (!server_open(&ctx->server, server_port))
+	{
+		logger_log(LOG_ERROR, "Failed to open server");
+		close(ctx->lock_fd);
+		return (0);
+	}
+	server_set_message_hook(&ctx->server, message_hook, ctx);
+	server_set_connect_hook(&ctx->server, connect_hook, ctx);
+	server_set_disconnect_hook(&ctx->server, disconnect_hook, ctx);
+	logger_log(LOG_INFO, "Server opened");
+	send_host_to_sword(server_port);
+	return (1);
 }
 
 int	ctx_init(t_ctx *ctx)
 {
-	char	*log_file;
-
-	if (ctx->is_root)
-		log_file = "/var/log/ft_shield.log";
-	else
-		log_file = "/tmp/ft_shield.log";
-
 	ctx->running = true;
-	signal(SIGINT, handle_sig);
-	signal(SIGTERM, handle_sig);
-	ctx->log_fd = open(log_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	if (ctx->log_fd == -1)
-		return (0);
-	logger_log(ctx, LOG_INFO, "Starting ft_shield");
-
+	setup_signals();
+	logger_log(LOG_INFO, "Starting ft_shield");
 	if (!lock_file(ctx))
 	{
-		logger_log(ctx, LOG_ERROR, "Failed to lock " LOCK_FILE);
-		close(ctx->log_fd);
+		logger_log(LOG_ERROR, "Failed to lock " LOCK_FILE);
 		return (0);
 	}
-	logger_log(ctx, LOG_INFO, "Locked " LOCK_FILE);
+	logger_log(LOG_INFO, "Locked " LOCK_FILE);
 
 	if (!daemonize(ctx))
 	{
-		close(ctx->log_fd);
 		close(ctx->lock_fd);
 		return (0);
 	}
@@ -134,25 +150,7 @@ int	ctx_init(t_ctx *ctx)
 	sprintf(buf, "%d", getpid());
 	write(ctx->lock_fd, buf, strlen(buf));
 
-	int	server_port;
-	if (ctx->is_root)
-		server_port = 4242;
-	else
-		server_port = 7002;
-
-	logger_log(ctx, LOG_INFO, "Opening server");
-	if (!server_open(&ctx->server, server_port))
-	{
-		logger_log(ctx, LOG_ERROR, "Failed to open server");
-		close(ctx->log_fd);
-		close(ctx->lock_fd);
-		return (0);
-	}
-	server_set_message_hook(&ctx->server, message_hook, ctx);
-	server_set_connect_hook(&ctx->server, connect_hook, ctx);
-	server_set_disconnect_hook(&ctx->server, disconnect_hook, ctx);
-	logger_log(ctx, LOG_INFO, "Server opened");
-	send_host_to_sword(ctx, server_port);
+	ctx_open_server(ctx);
 	return (1);
 }
 
@@ -160,15 +158,14 @@ int	ctx_delete(t_ctx *ctx, bool log)
 {
 	if (log)
 	{
-		logger_log(ctx, LOG_INFO, "Closing server");
+		logger_log(LOG_INFO, "Closing server");
 		server_send_to_all(&ctx->server, "Closing server.\n");
 	}
 	server_close(&ctx->server);
 	if (log)
-		logger_log(ctx, LOG_INFO, "Closing ft_shield");
+		logger_log(LOG_INFO, "Closing ft_shield");
 	unlock_file(ctx);
 	if (log)
-		logger_log(ctx, LOG_INFO, "Unlocked " LOCK_FILE);
-	close(ctx->log_fd);
+		logger_log(LOG_INFO, "Unlocked " LOCK_FILE);
 	return (0);
 }

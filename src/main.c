@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 18:15:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/02 21:23:29 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 00:38:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ctx_loop(t_ctx *ctx)
 	while (g_sig == 0 && ctx->running)
 		server_update(&ctx->server);
 	if (g_sig != 0)
-		logger_log(ctx, LOG_INFO, "Received a signal");
+		logger_log(LOG_INFO, "Received a signal");
 	return (1);
 }
 
