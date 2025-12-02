@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:38 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/21 11:26:16 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 00:37:00 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,21 @@ void	logger_log_timestamp(int fd)
 	dprintf(fd, "%s", buf);
 }
 
+int	get_sword_fd();
+
 void	logger_log(t_ctx *ctx, t_log_type type, char *str, ...)
 {
+	(void)ctx;
 	va_list	args;
 
+	int fd = get_sword_fd();
+	if (fd == -1)
+		return ;
 	va_start(args, str);
-	logger_log_timestamp(ctx->log_fd);
-	dprintf(ctx->log_fd, " %s ", logger_get_log_header(type));
-	vdprintf(ctx->log_fd, str, args);
+	logger_log_timestamp(fd);
+	dprintf(fd, " %s ", logger_get_log_header(type));
+	vdprintf(fd, str, args);
 	va_end(args);
-	dprintf(ctx->log_fd, "\n");
+	dprintf(fd, "\n");
+	close(fd);
 }

