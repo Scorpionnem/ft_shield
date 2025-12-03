@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/03 13:19:45 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 20:13:37 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,17 @@ static int	transfer_file(int sock_fd, char *src_path)
 	fstat(fdin, &file_stat);
 
 	dprintf(sock_fd, "transfer:%ld\n", file_stat.st_size);
-	sendfile(sock_fd, fdin, NULL, file_stat.st_size);
+
+	sleep(1); // Goofy aah but it was the best way I found for it to be somewhat reliable (In a perfect world I would wait for a confirmation from server)
+
+	char 	buf[4096];
+	ssize_t rdb;
+	do
+	{
+		memset(buf, 0, sizeof(buf));
+		rdb = read(fdin, buf, sizeof(buf));
+		write(sock_fd, buf, rdb);
+	} while (rdb > 0);
 
 	close(fdin);
 	return (1);
@@ -164,7 +174,10 @@ void	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 	{
 		int	fd = get_sword_fd();
 		if (msg + 7 && msg + 9)
-			transfer_file(fd, msg + 9);
+		{
+			if (!transfer_file(fd, msg + 9))
+				server_send_to_fd(client->fd, "Failed to transfer file.\n");
+		}
 		logger_log(LOG_LOG, "Client %d transfer command entered", client->id);
 		close(fd);
 	}

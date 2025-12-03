@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:20:35 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/03 13:20:34 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 19:40:54 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,8 @@ int	server_add_client(t_server *server, int fd)
 	t_client	*cl;
 
 	cl = malloc(sizeof(t_client));
+	if (!cl)
+		return (0);
 	memset(cl, 0, sizeof(t_client));
 	cl->fd = fd;
 	cl->id = server->current_client_id++;
@@ -221,94 +223,128 @@ char	*append_to_str(char *s1, char *s2, size_t s1len, size_t s2len)
 	return (res);
 }
 
+static int	server_read_client_nl(t_server *server, t_client *client)
+{
+	while (1)
+	{
+		char 	buffer[1024] = {0};
+		ssize_t size;
+
+		size = recv(client->fd, buffer, sizeof(buffer), 0);
+		if (size == 0 || size == -1)
+		{
+			if (server->disconnect_hook)
+				server->disconnect_hook(client, server->disconnect_hook_arg);
+			server_remove_client(server, client->fd);
+			return (-1);
+		}
+		client->buffer = server_strjoin(client->buffer, buffer);
+		if (server_strchr(client->buffer, '\n'))
+			break ;
+	}
+	return (1);
+}
+
+# define TEXT_RED "\033[31m"
+# define TEXT_GREEN "\033[32m"
+# define TEXT_RESET "\033[0m"
+
+static int	server_read_client_raw(t_server *server, t_client *client)
+{
+	while (1)
+	{
+		char 	buffer[8192] = {0};
+		ssize_t size;
+
+		size = recv(client->fd, buffer, sizeof(buffer), 0);
+		if (size == 0 || size == -1)
+		{
+			if (server->disconnect_hook)
+				server->disconnect_hook(client, server->disconnect_hook_arg);
+			server_remove_client(server, client->fd);
+			printf(TEXT_RED "\nFailed to fully receive raw data\n" TEXT_RESET);
+			return (-1);
+		}
+		client->buffer = append_to_str(client->buffer, buffer, client->total_size, size);
+		client->total_size += size;
+		printf("\rReceived %ld/%ld bytes", client->total_size, client->file_size);
+		fflush(stdout);
+		if (client->total_size >= client->file_size)
+		{
+			printf(TEXT_GREEN "\nFinished receiving file\n" TEXT_RESET);
+			break ;
+		}
+	}
+	return (1);
+}
+
+static int	server_read_client(t_server *server, t_client *client)
+{
+	if (client->receiving_file)
+		return (server_read_client_raw(server, client));
+	else
+		return (server_read_client_nl(server, client));
+}
+
+static int	server_treat_client_input(t_server *server, t_client *client)
+{
+	while (1)
+	{
+		if (client->receiving_file)
+		{
+			printf("Total size %ld\n", client->total_size);
+			if (server->message_hook)
+				server->message_hook(client, client->buffer, client->file_size, server->message_hook_arg);
+			client->receiving_file = false;
+			free(client->buffer);	
+			client->buffer = NULL;
+			break ;
+		}
+		char	*msg = server_extract_line(&client->buffer);
+		if (!msg)
+			break ;
+
+		if (!strncmp(msg, "transfer:", 9))
+		{
+			client->receiving_file = true;
+			client->file_size = atoll(msg + 9);
+			client->total_size = 0;
+			printf("Received file transfer size %ld\n", client->file_size);
+			free(msg);
+			break ;
+		}
+
+		if (server->message_hook)
+			server->message_hook(client, msg, strlen(msg), server->message_hook_arg);
+		free(msg);
+	}
+	return (1);
+}
+
 int	server_read_clients(t_server *server)
 {
 	t_client	**arr;
 	int	i = 1;
 
-	arr = list_to_array(&server->clients);
+	// arr = list_to_array(&server->clients);
 	for (uint64_t c = 0; c < server->clients.size;)
 	{
-		if (server->fds[i].revents & POLLIN && arr[c]->shell_pid == 0)
+		arr = list_to_array(&server->clients);
+		t_client	*client = arr[c];
+		free(arr);
+
+		if (server->fds[i].revents & POLLIN && client->shell_pid == 0)
 		{
-			if (!arr[c]->receiving_file)
-			{
-				while (1)
-				{
-					char 	buffer[1024] = {0};
-					ssize_t size;
-		
-					size = recv(arr[c]->fd, buffer, sizeof(buffer), 0);
-					if (size == 0 || size == -1)
-					{
-						if (server->disconnect_hook)
-							server->disconnect_hook(arr[c], server->disconnect_hook_arg);
-						server_remove_client(server, arr[c]->fd);
-						goto skip_it;
-					}
-					arr[c]->buffer = server_strjoin(arr[c]->buffer, buffer);
-					if (server_strchr(arr[c]->buffer, '\n'))
-						break ;
-				}
-			}
-			else
-			{
-				while (1)
-				{
-					char 	buffer[1024] = {0};
-					ssize_t size;
-		
-					size = recv(arr[c]->fd, buffer, sizeof(buffer), 0);
-					if (size == 0 || size == -1)
-					{
-						if (server->disconnect_hook)
-							server->disconnect_hook(arr[c], server->disconnect_hook_arg);
-						server_remove_client(server, arr[c]->fd);
-						goto skip_it;
-					}
-					arr[c]->buffer = append_to_str(arr[c]->buffer, buffer, arr[c]->total_size, size);
-					arr[c]->total_size += size;
-					if (arr[c]->total_size >= arr[c]->file_size)
-						break ;
-				}
-			}
-			while (1)
-			{
-				if (arr[c]->receiving_file)
-				{
-					printf("Total size %ld\n", arr[c]->total_size);
-					if (server->message_hook)
-						server->message_hook(arr[c], arr[c]->buffer, arr[c]->file_size, server->message_hook_arg);
-					arr[c]->receiving_file = false;
-					free(arr[c]->buffer);	
-					arr[c]->buffer = NULL;
-					break ;
-				}
-				char	*msg = server_extract_line(&arr[c]->buffer);
-				if (!msg)
-					break ;
+			if (server_read_client(server, client) == -1)
+				continue ;
 
-				if (!strncmp(msg, "transfer:", 9))
-				{
-					arr[c]->receiving_file = true;
-					arr[c]->file_size = atoll(msg + 9);
-					arr[c]->total_size = 0;
-					printf("Received file transfer size %ld\n", arr[c]->file_size);
-					free(msg);
-					break ;
-				}
-
-				if (server->message_hook)
-					server->message_hook(arr[c], msg, strlen(msg), server->message_hook_arg);
-				free(msg);
-			}
+			if (!server_treat_client_input(server, client))
+				return (0);
 		}
 
 		c++;
-	skip_it:
 		i++;
 	}
-	free(arr);
 	arr = list_to_array(&server->clients);
 	for (uint64_t c = 0; c < server->clients.size; c++)
 	{
