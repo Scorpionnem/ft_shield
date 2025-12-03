@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/03 00:44:29 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 00:46:44 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	send_host_to_sword(int server_port)
 	if (!ip_buffer)
 		return ;
 
-	logger_log(LOG_INFO, "Running ft_shield on %s (%s) %d\n", ip_buffer, host_buffer, server_port);
+	logger_log(LOG_INFO, "Running ft_shield on %s (%s) %d", ip_buffer, host_buffer, server_port);
 }
 
 static int	setup_signals()

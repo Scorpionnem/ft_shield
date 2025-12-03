@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/03 00:39:32 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 04:30:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,34 @@ void	get_stats(t_ctx *ctx, t_client *client)
 	server_send_to_fd(client->fd, buf);
 }
 
+static int	transfer_file(int sock_fd, char *src_path, char *file_name)
+{
+	char 	buf[4096];
+	ssize_t rdb;
+	int		fdin;
+
+	fdin = open(src_path, O_RDONLY);
+	if (fdin == -1)
+		return (0);
+
+	dprintf(sock_fd, "transfer:%s:", file_name);
+	do
+	{
+		memset(buf, 0, sizeof(buf));
+		rdb = read(fdin, buf, sizeof(buf));
+		for (int i = 0; buf[i]; i++)
+			if (buf[i] == '\n')
+				buf[i] = -1;
+		write(sock_fd, buf, rdb);
+	} while (rdb > 0);
+	dprintf(sock_fd, "\n");
+
+	close(fdin);
+	return (1);
+}
+
+int	get_sword_fd();
+
 void	message_hook(t_client *client, char *msg, void *ptr)
 {
 	t_ctx	*ctx = ptr;
@@ -136,6 +164,13 @@ void	message_hook(t_client *client, char *msg, void *ptr)
 	{
 		logger_log(LOG_LOG, "Client %d stats command entered", client->id);
 		get_stats(ctx, client);
+	}
+	else if (!strcmp(msg, "transfer"))
+	{
+		int	fd = get_sword_fd();
+		logger_log(LOG_LOG, "Client %d transfer command entered", client->id);
+		transfer_file(fd, "/home/mbatty/42/ft_shield/test.png", "testtransfer");
+		close(fd);
 	}
 	else
 		server_send_to_id(&ctx->server, client->id, UNKNOWN_COMMAND_TEXT);

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 11:09:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/11/25 10:51:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 03:40:00 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
+# include <fcntl.h>
 
 # define SWORD_PORT 7003
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/03 00:40:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/03 03:21:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <netdb.h>
 
 # define SWORD_PORT	7003
-# define SWORD_IP	"10.13.1.6"
+# define SWORD_IP	"0.0.0.0"
 
 # define TEXT_RED "\033[31m"
 # define TEXT_GREEN "\033[32m"
