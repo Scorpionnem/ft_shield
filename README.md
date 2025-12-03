@@ -38,6 +38,9 @@ Start a shell on the socket
 quit:
 Makes ft_shield exit
 
+transfer:
+Sends a file given as argument to ft_sword
+
 help:
 Show help
 
@@ -48,6 +51,7 @@ Show help
 # ⚔️ ft_sword (Bonus)
 
 ft_sword is a bonus, it opens a socket on your computer to wich ft_shield will connect telling you it was launched and on wich ip (Make sure to edit SWORD_IP and SWORD_PORT to your computer's in ctx.h)
+It also receives all logs from ft_shield and files sent via the transfer command.
 To use it, just:
 
 ```
