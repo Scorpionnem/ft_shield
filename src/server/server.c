@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:20:35 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 09:32:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 10:05:20 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,6 @@ int	server_open(t_server *server, int port)
 	}
 	return (1);
 }
-
-#include <signal.h>
 
 static void close_client(t_client *cl)
 {
