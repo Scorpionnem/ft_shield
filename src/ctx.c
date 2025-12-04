@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 09:46:32 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 10:41:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ static int	lock_file(t_ctx *ctx)
 	}
 	if (flock(ctx->lock_fd, LOCK_EX | LOCK_NB) < 0)
 	{
-		return (0);
 		logger_log(LOG_ERROR, "Failed to lock " LOCK_FILE);
+		return (0);
 	}
 	logger_log(LOG_INFO, "Locked " LOCK_FILE);
 	return (1);
