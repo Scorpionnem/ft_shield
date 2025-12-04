@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 10:30:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 10:46:42 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <netdb.h>
 # include <unistd.h>
 # include <sys/file.h>
+# include <stdarg.h>
 
 # define SWORD_PORT	7003
 # ifndef SWORD_IP
