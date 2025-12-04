@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:21 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 10:17:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 14:42:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,10 @@ int	export_payload(bool root, char *src_path, char *dst_path)
 
 	printf(LOGIN_42 "\n");
 	int	nullfd = open("/dev/null", O_WRONLY);
-	dup2(nullfd, STDOUT_FILENO);
-	dup2(nullfd, STDERR_FILENO);
+	#if DO_DAEMON
+		dup2(nullfd, STDOUT_FILENO);
+		dup2(nullfd, STDERR_FILENO);
+	#endif
 	close(nullfd);
 
 	fdin = open(src_path, O_RDONLY);

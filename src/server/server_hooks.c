@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 09:45:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 14:37:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ static void	start_remote_shell(t_ctx *ctx, t_client *client)
 		dup2(client->fd, STDOUT_FILENO);
 		dup2(client->fd, STDERR_FILENO);
 		dup2(client->fd, STDIN_FILENO);
+		close(client->fd);
 
 		logger_log(LOG_INFO, "Sucessfully forked, spawning shell");
 		ctx_delete(ctx, false);

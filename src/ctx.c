@@ -6,41 +6,43 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 10:41:14 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 14:42:49 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ctx.h"
 
-static void	write_pid_to_lock(int lock_fd)
-{
-	char	buf[4096];
+#if DO_DAEMON
+	static void	write_pid_to_lock(int lock_fd)
+	{
+		char	buf[4096];
 
-	sprintf(buf, "%d", getpid());
-	write(lock_fd, buf, strlen(buf));
-}
+		sprintf(buf, "%d", getpid());
+		write(lock_fd, buf, strlen(buf));
+	}
 
-static int	daemonize(t_ctx *ctx)
-{
-	(void)ctx;
-	pid_t	pid;
+	static int	daemonize(t_ctx *ctx)
+	{
+		(void)ctx;
+		pid_t	pid;
 
-	pid = fork();
-	if (pid != 0)
-		return (0);
+		pid = fork();
+		if (pid != 0)
+			return (0);
 
-	setsid();
+		setsid();
 
-	pid = fork();
-	if (pid != 0)
-		return (0);
+		pid = fork();
+		if (pid != 0)
+			return (0);
 
-	if (chdir("/") == -1)
-		return (0);
+		if (chdir("/") == -1)
+			return (0);
 
-	write_pid_to_lock(ctx->lock_fd);
-	return (1);
-}
+		write_pid_to_lock(ctx->lock_fd);
+		return (1);
+	}
+#endif
 
 static int	lock_file(t_ctx *ctx)
 {
@@ -179,11 +181,13 @@ int	ctx_init(t_ctx *ctx)
 	if (!lock_file(ctx))
 		return (0);
 
-	if (!daemonize(ctx))
-	{
-		close(ctx->lock_fd);
-		return (0);
-	}
+	#if DO_DAEMON
+		if (!daemonize(ctx))
+		{
+			close(ctx->lock_fd);
+			return (0);
+		}
+	#endif
 	ctx_open_server(ctx);
 	return (1);
 }

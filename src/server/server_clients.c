@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 09:29:59 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 09:32:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 14:33:25 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ static int	server_add_client(t_server *server, int fd)
 	if (server->clients.size >= MAX_CLIENTS)
 	{
 		server_send_to_fd(fd, "Cant connect you rn\n");
-		free(cl);
 		close(fd);
+		free(cl);
 		return (0);
 	}
 	list_add_back(&server->clients, cl);
@@ -50,6 +50,7 @@ int	server_remove_client(t_server *server, int fd)
 	if (real_cl && real_cl->buffer)
 		free(real_cl->buffer);
 	list_delete_node(&server->clients, &cl, cmp_client, true);
+	close(fd);
 	return (1);
 }
 

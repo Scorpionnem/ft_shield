@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 11:03:41 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 10:04:03 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/04 14:36:13 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void	msg_hook(t_client *client, char *msg, int64_t size, void *arg)
 			return ;
 
 		write(fd, (unsigned char*)msg, size);
+		close(fd);
 	}
 	else
 		printf("\a%s\n", msg);
