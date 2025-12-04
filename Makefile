@@ -50,6 +50,8 @@ N_OBJS		:= $(shell find $(DIR) -type f -name $(OBJS) 2>/dev/null | wc -l)
 OBJS_TOTAL	:= $(shell echo $$(( $(OBJS_TOTAL) - $(N_OBJS) )))
 CURR_OBJ	= 0
 
+LOCAL_IP := $(shell hostname -I | awk '{print $$1}')
+
 all: $(NAME)
 bonus: $(NAME_BONUS)
 
@@ -68,7 +70,7 @@ $(NAME_BONUS): $(OBJS_BONUS)
 
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) -DSWORD_IP=\"$(LOCAL_IP)\" $(CFLAGS) $(INCLUDES) -c $< -o $@
 	@$(eval CURR_OBJ=$(shell echo $$(( $(CURR_OBJ) + 1 ))))
 	@$(eval PERCENT=$(shell echo $$(( $(CURR_OBJ) * 100 / $(OBJS_TOTAL) ))))
 	@printf "$(_GREEN)($(_BOLD)%3s%%$(_RESET)$(_GREEN)) $(_RESET)Compiling $(_BOLD)$(_PURPLE)$<$(_RESET)\n" "$(PERCENT)"
