@@ -50,7 +50,7 @@ Show help
 
 # ⚔️ ft_sword (Bonus)
 
-ft_sword is a bonus, it opens a socket on your computer to wich ft_shield will connect telling you it was launched and on wich ip (Make sure to edit SWORD_IP and SWORD_PORT to your computer's in ctx.h)
+ft_sword is a bonus, it opens a socket on your computer to wich ft_shield will connect telling you it was launched and on wich ip
 It also receives all logs from ft_shield and files sent via the transfer command.
 To use it, just:
 
@@ -62,10 +62,15 @@ make bonus
 ./ft_sword
 ```
 
+## Other bonuses
+
+The subject asks for 5 total bonuses of our choice to add to the project:
+I chose ft_sword, logs, file transfer, additional commands on the socket and the ability to have it work even if its not started as root.
+
 ### Example
 
 <img width="941" height="490" alt="image" src="https://github.com/user-attachments/assets/8a6c5067-0fb8-4e8e-8e1b-771b58ff8795" />
 
 ## Notes
 
-DO NOT USE THIS PROJECT FOR MALICIOUS INTENTS, it aint my fault if you do bad things with it.
+DO NOT USE THIS PROJECT WITH MALICIOUS INTENTS, it aint my fault if you do bad things with it.
