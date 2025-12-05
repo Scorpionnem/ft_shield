@@ -6,30 +6,11 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 12:26:03 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 09:25:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/05 10:55:57 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_internals.h"
-
-char	*append_to_str(char *s1, char *s2, size_t s1len, size_t s2len)
-{
-	if (!s1)
-	{
-		char	*res = calloc(s2len, sizeof(char));
-		if (!res)
-			return (NULL);
-		memcpy(res, s2, s2len);
-		return (res);
-	}
-	char	*res = calloc(s1len + s2len, sizeof(char));
-	if (!res)
-		return (NULL);
-	memcpy(res, s1, s1len);
-	memcpy(res + s1len, s2, s2len);
-	free(s1);
-	return (res);
-}
 
 char	*server_strjoin(char *s1, char *s2)
 {

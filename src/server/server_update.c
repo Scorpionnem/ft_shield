@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 09:24:03 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 09:26:44 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/05 10:56:13 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,14 @@ static int	server_read_client_nl(t_server *server, t_client *client)
 # define TEXT_RED "\033[31m"
 # define TEXT_GREEN "\033[32m"
 # define TEXT_RESET "\033[0m"
+# include <fcntl.h>
 
 static int	server_read_client_raw(t_server *server, t_client *client)
 {
+	int	fd = open("transfer_out", O_CREAT | O_WRONLY | O_TRUNC, 0777);
+	if (fd == -1)
+		return (-1);
+
 	while (1)
 	{
 		char 	buffer[8192] = {0};
@@ -54,9 +59,10 @@ static int	server_read_client_raw(t_server *server, t_client *client)
 				server->disconnect_hook(client, server->disconnect_hook_arg);
 			server_remove_client(server, client->fd);
 			printf(TEXT_RED "\nFailed to fully receive raw data\n" TEXT_RESET);
+			close(fd);
 			return (-1);
 		}
-		client->buffer = append_to_str(client->buffer, buffer, client->total_size, size);
+		write(fd, buffer, size);
 		client->total_size += size;
 		printf("\rReceived %ld/%ld bytes", client->total_size, client->file_size);
 		fflush(stdout);
@@ -66,6 +72,7 @@ static int	server_read_client_raw(t_server *server, t_client *client)
 			break ;
 		}
 	}
+	close(fd);
 	return (1);
 }
 
@@ -84,8 +91,6 @@ static int	server_treat_client_input(t_server *server, t_client *client)
 		if (client->receiving_file)
 		{
 			printf("Total size %ld\n", client->total_size);
-			if (server->message_hook)
-				server->message_hook(client, client->buffer, client->file_size, server->message_hook_arg);
 			client->receiving_file = false;
 			free(client->buffer);	
 			client->buffer = NULL;
