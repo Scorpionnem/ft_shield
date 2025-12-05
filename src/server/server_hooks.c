@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 14:37:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/05 12:57:59 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,7 @@ void	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 	else if (!strncmp(msg, "transfer", 8))
 	{
 		int	fd = get_sword_fd();
-		if (msg + 7 && msg + 9)
+		if (*(msg + 7) && *(msg + 9))
 		{
 			if (!transfer_file(fd, msg + 9))
 				server_send_to_fd(client->fd, TEXT_RED "Failed to transfer file.\n" TEXT_RESET);
