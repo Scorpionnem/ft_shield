@@ -130,6 +130,10 @@ int	server_read_clients(t_server *server)
 		t_client	*client = arr[c];
 		free(arr);
 
+		if (client->shell_pid > 0) {
+			c++;
+            continue;
+		}
 		if (server->fds[i].revents & POLLIN && client->shell_pid == 0)
 		{
 			if (server_read_client(server, client) == -1)
@@ -138,7 +142,6 @@ int	server_read_clients(t_server *server)
 			if (!server_treat_client_input(server, client))
 				return (0);
 		}
-
 		c++;
 		i++;
 	}
@@ -160,7 +163,15 @@ int	server_read_clients(t_server *server)
 int	server_update(t_server *server)
 {
 	server_refresh_poll(server);
-	int	poll_events = poll(server->fds, server->clients.size + 1, 250);
+
+	int poll_count = 1;
+    t_client **arr = list_to_array(&server->clients);
+    for (uint64_t c = 0; c < server->clients.size; c++)
+        if (arr[c]->shell_pid == 0)
+            poll_count++;
+    free(arr);
+
+	int	poll_events = poll(server->fds, poll_count, 250);
 	if (poll_events == -1 && errno == EINTR)
 		return (1);
 	if ((server->fds[0].revents & POLLIN) != 0)
@@ -180,10 +191,12 @@ int	server_refresh_poll(t_server *server)
 	int	i = 1;
 	for (uint64_t c = 0; c < server->clients.size; c++)
 	{
-		server->fds[i].fd = arr[c]->fd;
-		server->fds[i].events = POLLIN;
-		server->fds[i].revents = 0;
-		i++;
+		if (arr[c]->shell_pid == 0) {
+			server->fds[i].fd = arr[c]->fd;
+			server->fds[i].events = POLLIN;
+			server->fds[i].revents = 0;
+			i++;
+		}
 	}
 	free(arr);
 	return (1);
