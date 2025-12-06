@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/06 11:07:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/06 14:05:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,6 @@ static size_t	get_active_shells(t_server *server)
 static void	start_remote_shell(t_ctx *ctx, t_client *client)
 {
 	logger_log(LOG_LOG, "Client %d shell command entered", client->id);
-	if (get_active_shells(&ctx->server) != 0)
-	{
-		server_send_to_fd(client->fd, RVRS_SHELL_FAIL_TEXT);
-		server_send_to_fd(client->fd, PROMPT);
-		return ;
-	}
 	server_send_to_id(&ctx->server, client->id, RVRS_SHELL_TEXT);
 
 	client->shell_pid = fork();

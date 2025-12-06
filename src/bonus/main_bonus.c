@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 11:03:41 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/06 12:43:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/06 14:06:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,5 @@ int	main(void)
 	server_set_message_hook(&ctx.server, msg_hook, &ctx);
 	while (g_sig == 0)
 		server_update(&ctx.server);
-	server_close(&ctx.server);
+	server_close(&ctx.server, true);
 }

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 18:15:07 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/03 11:58:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/06 14:06:29 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ typedef struct s_server
 }	t_server;
 
 int	server_update(t_server *server);
-int	server_close(t_server *server);
+int	server_close(t_server *server, bool kill_shells);
 int	server_open(t_server *server, int port);
 
 void	server_set_connect_hook(t_server *server, void (*func)(t_client *client, void *arg), void *arg);

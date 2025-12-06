@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:27:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/06 12:43:06 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/06 14:06:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ int	ctx_delete(t_ctx *ctx, bool log)
 		logger_log(LOG_INFO, "Closing server");
 		server_send_to_all(&ctx->server, "Closing server.\n");
 	}
-	server_close(&ctx->server);
+	server_close(&ctx->server, log);
 	if (log)
 		logger_log(LOG_INFO, "Closing ft_shield");
 	unlock_file(ctx);

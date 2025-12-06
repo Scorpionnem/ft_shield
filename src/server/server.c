@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:20:35 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/04 14:35:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/06 14:06:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,15 +45,21 @@ int	server_open(t_server *server, int port)
 
 static void close_client(t_client *cl)
 {
-	if (cl->shell_pid > 0)
-		kill(cl->shell_pid, SIGKILL);
 	if (cl->buffer)
 		free(cl->buffer);
 	close(cl->fd);
 }
 
-int	server_close(t_server *server)
+static void kill_client_shell(t_client *cl)
 {
+	if (cl->shell_pid > 0)
+		kill(cl->shell_pid, SIGKILL);
+}
+
+int	server_close(t_server *server, bool kill_shells)
+{
+	if (kill_shells)
+		list_for_each(&server->clients, kill_client_shell);
 	list_for_each(&server->clients, close_client);
 	list_delete(&server->clients, true);
 	if (server->socket_fd != 0)
