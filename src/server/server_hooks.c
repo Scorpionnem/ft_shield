@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/05 12:57:59 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/06 11:07:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,34 @@ static int	check_client_password(t_ctx *ctx, t_client *client, char *msg)
 	return (1);
 }
 
+static size_t	get_active_shells(t_server *server)
+{
+	size_t	res;
+	size_t	i;
+	t_client	**clients;
+
+	res = 0;
+	i = 0;
+	clients = list_to_array(&server->clients);
+	while (i < server->clients.size)
+	{
+		if (clients[i]->shell_pid > 0)
+			res++;
+		i++;
+	}
+	free(clients);
+	return (res);
+}
+
 static void	start_remote_shell(t_ctx *ctx, t_client *client)
 {
 	logger_log(LOG_LOG, "Client %d shell command entered", client->id);
+	if (get_active_shells(&ctx->server) != 0)
+	{
+		server_send_to_fd(client->fd, RVRS_SHELL_FAIL_TEXT);
+		server_send_to_fd(client->fd, PROMPT);
+		return ;
+	}
 	server_send_to_id(&ctx->server, client->id, RVRS_SHELL_TEXT);
 
 	client->shell_pid = fork();
@@ -68,25 +93,6 @@ static size_t	get_logged_users(t_server *server)
 	while (i < server->clients.size)
 	{
 		if (clients[i]->logged)
-			res++;
-		i++;
-	}
-	free(clients);
-	return (res);
-}
-
-static size_t	get_active_shells(t_server *server)
-{
-	size_t	res;
-	size_t	i;
-	t_client	**clients;
-
-	res = 0;
-	i = 0;
-	clients = list_to_array(&server->clients);
-	while (i < server->clients.size)
-	{
-		if (clients[i]->shell_pid > 0)
 			res++;
 		i++;
 	}
