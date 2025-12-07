@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/07 12:52:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/07 14:10:36 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,6 @@ int	message_hook(t_client *client, char *msg, int64_t size, void *ptr)
 		ctx->server.goofy_shell = true;
 		if (ctx->server.disconnect_hook)
 			ctx->server.disconnect_hook(client, ctx->server.disconnect_hook_arg);
-		close(client->fd);
 		server_remove_client(&ctx->server, client->fd);
 		return (0);
 	}

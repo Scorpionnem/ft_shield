@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 09:24:03 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/07 12:54:46 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/07 14:11:03 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,16 +169,15 @@ int	server_read_clients(t_server *server)
 			int result = waitpid(client->shell_pid, &status, WNOHANG);
 			if (result == client->shell_pid)
 			{
-				server_send_to_fd(client->fd, PROMPT);
 				client->shell_pid = 0;
 				if (client->is_goofy_shell)
 				{
 					if (server->disconnect_hook)
 						server->disconnect_hook(client, server->disconnect_hook_arg);
-					close(client->fd);
 					server_remove_client(server, client->fd);
 					continue ;
 				}
+				server_send_to_fd(client->fd, PROMPT);
 			}
 		}
 		c++;
