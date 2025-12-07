@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 11:03:41 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/07 11:05:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/07 12:44:43 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	msg_hook(t_client *client, char *msg, int64_t size, void *arg)
 	{
 		int	fd = open("transfer_out", O_CREAT | O_WRONLY | O_TRUNC, 0777);
 		if (fd == -1)
-			return ;
+			return 1;
 
 		write(fd, (unsigned char*)msg, size);
 		close(fd);

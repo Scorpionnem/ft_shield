@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 18:15:07 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/07 11:04:40 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/07 12:43:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,9 @@ typedef struct s_server
 
 	unsigned int		current_client_id;
 	t_list				clients;
+
+	uint64_t	total_bytes_received;
+	uint64_t	messages_received;
 
 	void (*connect_hook)(t_client *, void *);
 	void	*connect_hook_arg;

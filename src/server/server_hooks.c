@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/07 11:06:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/07 12:52:28 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,12 @@ static void	get_stats(t_ctx *ctx, t_client *client)
 	server_send_to_fd(client->fd, buf);
 
 	sprintf(buf, "Active shells: %lu\n", get_active_shells(&ctx->server));
+	server_send_to_fd(client->fd, buf);
+
+	sprintf(buf, "Bytes received %lu\n", ctx->server.total_bytes_received);
+	server_send_to_fd(client->fd, buf);
+
+	sprintf(buf, "Messages received %lu\n", ctx->server.messages_received);
 	server_send_to_fd(client->fd, buf);
 }
 

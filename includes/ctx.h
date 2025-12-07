@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 11:24:44 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/07 11:08:32 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/07 12:44:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include <sys/file.h>
 # include <stdarg.h>
 
-# define DO_DAEMON 1
+# define DO_DAEMON 0
 
 # define SWORD_PORT	7003
 # ifndef SWORD_IP

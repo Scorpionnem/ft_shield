@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 09:24:03 by mbatty            #+#    #+#             */
-/*   Updated: 2025/12/07 11:04:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/12/07 12:54:46 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ static int	server_read_client_nl(t_server *server, t_client *client)
 			server_remove_client(server, client->fd);
 			return (-1);
 		}
+		server->total_bytes_received += size;
 		client->buffer = server_strjoin(client->buffer, buffer);
 		if (!client->buffer)
 			return (0);
@@ -65,6 +66,7 @@ static int	server_read_client_raw(t_server *server, t_client *client)
 		}
 		write(fd, buffer, size);
 		client->total_size += size;
+		server->total_bytes_received += size;
 		printf("\rReceived %ld/%ld bytes", client->total_size, client->file_size);
 		fflush(stdout);
 		if (client->total_size >= client->file_size)
@@ -112,11 +114,14 @@ static int	server_treat_client_input(t_server *server, t_client *client)
 		}
 
 		if (server->message_hook)
+		{
+			server->messages_received++;
 			if (!server->message_hook(client, msg, strlen(msg), server->message_hook_arg))
 			{
 				free(msg);
 				return (-1);
 			}
+		}
 		free(msg);
 	}
 	return (1);
@@ -166,14 +171,14 @@ int	server_read_clients(t_server *server)
 			{
 				server_send_to_fd(client->fd, PROMPT);
 				client->shell_pid = 0;
-			}
-			if (client->is_goofy_shell)
-			{
-				if (server->disconnect_hook)
-					server->disconnect_hook(client, server->disconnect_hook_arg);
-				close(client->fd);
-				server_remove_client(server, client->fd);
-				continue ;
+				if (client->is_goofy_shell)
+				{
+					if (server->disconnect_hook)
+						server->disconnect_hook(client, server->disconnect_hook_arg);
+					close(client->fd);
+					server_remove_client(server, client->fd);
+					continue ;
+				}
 			}
 		}
 		c++;
